@@ -68,6 +68,7 @@ defineModuleConfig('copilot', {
     default: {
       apiKey: '',
       baseURL: 'https://api.openai.com/v1',
+      fallbackModel: '',
     },
     link: 'https://github.com/openai/openai-node',
   },

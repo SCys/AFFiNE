@@ -420,6 +420,50 @@ export class CopilotType {
   workspaceId!: string | null;
 }
 
+@Admin()
+@Resolver(() => CopilotModelsType)
+export class CopilotAdminResolver {
+  private readonly logger = new Logger(CopilotAdminResolver.name);
+
+  @Query(() => [CopilotModelType], {
+    description: 'List available models from a remote OpenAI compatible service',
+  })
+  async listRemoteOpenAIModels(
+    @Args('baseURL', { nullable: true }) baseURL: string,
+    @Args('apiKey') apiKey: string
+  ): Promise<CopilotModelType[]> {
+    const url = baseURL || 'https://api.openai.com/v1';
+    try {
+      const response = await fetch(`${url}/models`, {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new BadRequestException(
+          `Failed to fetch models: ${response.statusText}`
+        );
+      }
+
+      const data = await response.json();
+      // Simple validation of the response structure
+      if (!data || !Array.isArray(data.data)) {
+        throw new BadRequestException('Invalid response format from remote API');
+      }
+
+      return data.data.map((m: any) => ({
+        id: m.id,
+        name: m.id, // OpenAI models usually don't have separate display names in the list API
+      }));
+    } catch (e: any) {
+      this.logger.error('Failed to list remote models', e);
+      throw new BadRequestException(e.message || 'Failed to list remote models');
+    }
+  }
+}
+
 @Throttle()
 @Resolver(() => CopilotType)
 export class CopilotResolver {

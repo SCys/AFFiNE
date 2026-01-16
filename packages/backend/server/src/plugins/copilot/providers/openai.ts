@@ -369,7 +369,7 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
   override async refreshOnlineModels() {
     try {
       const baseUrl = this.config.baseURL || 'https://api.openai.com/v1';
-      if (this.config.apiKey && baseUrl && !this.onlineModelList.length) {
+      if (this.config.apiKey && baseUrl) {
         const { data } = await fetch(`${baseUrl}/models`, {
           headers: {
             Authorization: `Bearer ${this.config.apiKey}`,
@@ -379,6 +379,19 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
           .then(r => r.json())
           .then(r => ModelListSchema.parse(r));
         this.onlineModelList = data.map(model => model.id);
+        this.dynamicModels = this.onlineModelList
+          .filter(id => !this.hardcodedModels.find(m => m.id === id))
+          .map(id => ({
+            name: id,
+            id: id,
+            capabilities: [
+              {
+                input: [ModelInputType.Text],
+                output: [ModelOutputType.Text],
+                defaultForOutputType: id === this.config.fallbackModel,
+              },
+            ],
+          }));
       }
     } catch (e) {
       this.logger.error('Failed to fetch available models', e);

@@ -4,6 +4,7 @@ import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import { useState } from 'react';
 
 import { Header } from '../header';
+import { Keys } from './keys';
 
 function AiPage() {
   const [enableAi, setEnableAi] = useState(false);
@@ -32,7 +33,7 @@ function AiPage() {
               />
             </div>
           </div>
-          {/* <Prompts /> */}
+          <Keys />
         </ScrollAreaPrimitive.Viewport>
         <ScrollAreaPrimitive.ScrollAreaScrollbar
           className={cn(
