@@ -173,38 +173,3 @@ jobs:
         run: |
           docker buildx imagetools create --tag ghcr.io/toeverything/affine:${{needs.prepare.outputs.BUILD_TYPE}} ghcr.io/toeverything/affine:${{needs.prepare.outputs.BUILD_TYPE}}-${{needs.prepare.outputs.GIT_SHORT_HASH}}
           docker buildx imagetools create --tag ghcr.io/toeverything/affine:${{needs.prepare.outputs.APP_VERSION}} ghcr.io/toeverything/affine:${{needs.prepare.outputs.BUILD_TYPE}}-${{needs.prepare.outputs.GIT_SHORT_HASH}}
-
-  desktop:
-    name: Release Desktop
-    if: >-
-      ${{
-        (github.event_name != 'workflow_dispatch' && needs.canary-gate.outputs.SHOULD_RELEASE == 'true') ||
-        inputs.desktop_macos ||
-        inputs.desktop_windows ||
-        inputs.desktop_linux
-      }}
-    needs:
-      - prepare
-      - canary-gate
-    uses: ./.github/workflows/release-desktop.yml
-    secrets: inherit
-    with:
-      build-type: ${{ needs.prepare.outputs.BUILD_TYPE }}
-      app-version: ${{ needs.prepare.outputs.APP_VERSION }}
-      git-short-hash: ${{ needs.prepare.outputs.GIT_SHORT_HASH }}
-      desktop_macos: ${{ github.event_name != 'workflow_dispatch' || inputs.desktop_macos }}
-      desktop_windows: ${{ github.event_name != 'workflow_dispatch' || inputs.desktop_windows }}
-      desktop_linux: ${{ github.event_name != 'workflow_dispatch' || inputs.desktop_linux }}
-
-  mobile:
-    name: Release Mobile
-    if: ${{ inputs.mobile }}
-    needs:
-      - prepare
-    uses: ./.github/workflows/release-mobile.yml
-    secrets: inherit
-    with:
-      build-type: ${{ needs.prepare.outputs.BUILD_TYPE }}
-      app-version: ${{ needs.prepare.outputs.APP_VERSION }}
-      git-short-hash: ${{ needs.prepare.outputs.GIT_SHORT_HASH }}
-      ios-app-version: ${{ inputs.ios-app-version }}
