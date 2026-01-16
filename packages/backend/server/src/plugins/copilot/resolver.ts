@@ -525,6 +525,27 @@ export class CopilotResolver {
     if (!prompt) {
       throw new NotFoundException('Prompt not found');
     }
+
+    // Dynamic model discovery
+    for (const provider of this.providerFactory.providers) {
+      if (provider.configured()) {
+        for (const model of provider.models) {
+          const isChatModel = model.capabilities.some(
+            cap =>
+              cap.input.includes(ModelInputType.Text) &&
+              cap.output.includes(ModelOutputType.Text)
+          );
+
+          if (isChatModel) {
+            if (model.name) this.modelNames.set(model.id, model.name);
+            if (!prompt.optionalModels.includes(model.id)) {
+              prompt.optionalModels.push(model.id);
+            }
+          }
+        }
+      }
+    }
+
     const convertModels = (ids: string[]) => {
       return ids
         .map(id => ({ id, name: this.modelNames.get(id) }))

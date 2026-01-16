@@ -12,6 +12,10 @@ export class CopilotProviderFactory {
 
   readonly #providers = new Map<CopilotProviderType, CopilotProvider>();
 
+  get providers() {
+    return this.#providers.values();
+  }
+
   async getProvider(
     cond: ModelFullConditions,
     filter: {
