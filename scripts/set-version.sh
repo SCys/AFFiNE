@@ -17,8 +17,7 @@ update_app_version_in_helm_charts() {
 
   # Check if file exists
   if [ ! -f "$file_path" ]; then
-    echo "Error: File does not exist at $file_path."
-    return 1
+    return 0
   fi
 
   echo "Updating $file_path with appVersion $new_version"
@@ -41,8 +40,7 @@ update_app_stream_version() {
 
   # Check if file exists
   if [ ! -f "$file_path" ]; then
-    echo "Error: File does not exist at $file_path."
-    return 1
+    return 0
   fi
 
   echo "Updating $file_path with appVersion $new_version"
@@ -75,8 +73,7 @@ update_ios_marketing_version() {
 
   # Check if file exists
   if [ ! -f "$file_path" ]; then
-    echo "Error: File does not exist at $file_path."
-    return 1
+    return 0
   fi
 
   echo "Updating $file_path with MARKETING_VERSION $new_version"
