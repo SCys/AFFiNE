@@ -292,3 +292,5 @@ jobs:
           provenance: true
           file: .github/deployment/node/Dockerfile
           tags: ${{ needs.prepare.outputs.docker_tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
