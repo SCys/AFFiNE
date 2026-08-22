@@ -472,7 +472,11 @@ pub(super) fn validate_copilot_config(config: &CopilotRuntimeConfig) -> RuntimeR
 }
 
 fn deployment_from_env() -> Deployment {
-  if env::var("DEPLOYMENT_TYPE").as_deref() == Ok("selfhosted") {
+  if env::var("DEPLOYMENT_TYPE").as_deref() == Ok("selfhosted")
+    || env::var("selfhosted").as_deref() == Ok("true")
+    || env::var("SELFHOSTED").as_deref() == Ok("true")
+    || env::var("AFFINE_SELF_HOSTED").as_deref() == Ok("true")
+  {
     Deployment::SelfHosted
   } else {
     Deployment::Cloud

@@ -29,6 +29,7 @@ RUN apt-get update && \
 
 # Enable jemalloc by preloading the library
 ENV LD_PRELOAD=libjemalloc.so.2
+ENV DEPLOYMENT_TYPE=selfhosted
 
 EXPOSE 3010
 
