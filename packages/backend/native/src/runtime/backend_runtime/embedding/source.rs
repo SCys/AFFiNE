@@ -134,9 +134,6 @@ async fn load_live_doc_ids(pool: &PgPool, workspace_id: &str) -> RuntimeResult<V
     .ok_or_else(|| RuntimeError::invalid_state("workspace root doc is missing"))?;
   let projection = affine_doc_loader::project_workspace_root(root.blob, true)
     .map_err(|error| RuntimeError::invalid_state(format!("workspace root projection failed: {error}")))?;
-  if !projection.complete {
-    return Err(RuntimeError::invalid_state("workspace root projection is incomplete"));
-  }
   Ok(projection.doc_ids)
 }
 

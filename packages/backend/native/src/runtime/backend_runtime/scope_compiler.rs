@@ -42,9 +42,6 @@ impl ScopeCompiler {
       .ok_or_else(|| RuntimeError::invalid_state("workspace root doc is missing"))?;
     let mut facts = project_workspace_root_facts(&root.blob)
       .map_err(|error| RuntimeError::invalid_state(format!("workspace scope projection failed: {error}")))?;
-    if !facts.complete {
-      return Err(RuntimeError::invalid_state("workspace root projection is incomplete"));
-    }
 
     let properties_id = format!("db${}$docProperties", input.workspace_id);
     if let Some(properties) = load_current_doc(&self.pool, &input.workspace_id, &properties_id).await? {
