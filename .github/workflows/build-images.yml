@@ -199,6 +199,11 @@ jobs:
           pattern: server-native-*
           merge-multiple: true
           path: ./packages/backend/native
+      - name: Prepare native addons and list
+        shell: bash
+        run: |
+          touch ./packages/backend/native/server-native.armv7.node
+          ls -alh ./packages/backend/native
       - name: Build Server
         run: yarn workspace @affine/server build
       - name: Upload server dist
@@ -257,6 +262,7 @@ jobs:
 
       - name: Install production dependencies & Generate Prisma
         run: |
+          corepack enable
           yarn config set --json supportedArchitectures.cpu '["x64", "arm64"]'
           yarn config set --json supportedArchitectures.libc '["glibc"]'
           yarn workspaces focus @affine/server --production
