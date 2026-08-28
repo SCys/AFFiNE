@@ -138,8 +138,20 @@ pub(super) fn execute_embeddings(
   response
     .embeddings
     .into_iter()
-    .map(|vector| {
-      if vector.len() != 1024 || vector.iter().any(|value| !value.is_finite()) {
+    .map(|mut vector| {
+      if vector.iter().any(|value| !value.is_finite()) {
+        return Err(RuntimeError::invalid_state("invalid_embedding_vector"));
+      }
+      if vector.len() > 1024 {
+        vector.truncate(1024);
+        let norm = vector.iter().map(|v| v * v).sum::<f64>().sqrt();
+        if norm > 0.0 {
+          for v in &mut vector {
+            *v /= norm;
+          }
+        }
+      }
+      if vector.len() != 1024 {
         return Err(RuntimeError::invalid_state("invalid_embedding_vector"));
       }
       Ok(vector.into_iter().map(|value| value as f32).collect())
